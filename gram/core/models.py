@@ -24,9 +24,6 @@ class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     value = models.CharField(choices=settings.LIKE_CHOICES, default='Like', max_length=10)
 
-    def __str__(self):
-        return str(self.post)
-
 
 class Image(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

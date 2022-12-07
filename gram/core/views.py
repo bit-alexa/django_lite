@@ -50,11 +50,11 @@ def add_post(request):
             form.save_m2m()
             return redirect('feed')
         else:
-            print(form.errors)
+            return redirect('feed')
     else:
         form = AddPostForm()
         imageform = ImageForm()
-    return render(request, "core/add_post.html", {"form": form, "imageform": imageform})
+        return render(request, "core/add_post.html", {"form": form, "imageform": imageform})
 
 
 class TagView(ListView):

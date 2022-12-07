@@ -32,11 +32,13 @@ class UserForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
+    logo = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+    bio = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))
     class Meta:
         model = Profile
         fields = ('bio', 'logo')
 
-        widgets = {
-            'bio': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+        # widgets = {
+        #     'bio': forms.TextInput(attrs={'class': 'form-control'}),
+        # }
 

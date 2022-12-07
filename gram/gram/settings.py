@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-1tm0(b#3(f9#r2iqb4&3rmlaf@c&4+06menfo*7#uw7sikjt_8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
+ALLOWED_HOSTS = ['env-gramdjango.eba-b5abanpe.us-west-2.elasticbeanstalk.com']
 
 
 # Application definition
@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'users',
     'taggit',
     'easy_thumbnails',
-    'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_currentuser.middleware.ThreadLocalUserMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'gram.urls'
@@ -88,9 +86,9 @@ DATABASES = {
     }
 }
 
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+# import dj_database_url
+# db_from_env = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -131,13 +129,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static',
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -161,7 +158,7 @@ EMAIL_PORT = 587
 THUMBNAIL_ALIASES = {
     '': {
         'avatar': {'size': (200, 200), 'crop': True},
-        'post': {'size': (200, 200), 'crop': True},
+        'post': {'size': (500, 500), 'crop': True},
     },
 }
 

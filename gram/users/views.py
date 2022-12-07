@@ -20,7 +20,7 @@ def registration(request):
             return HttpResponse('Please confirm your email address to complete the registration')
     else:
         form = SignupForm()
-    return render(request, 'registration/registration.html', {'form': form})
+        return render(request, 'registration/registration.html', {'form': form})
 
 
 def activate(request, uidb64, token):
@@ -50,7 +50,7 @@ def profile_page(request, pk):
 def edit_profile(request, pk):
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=request.user)
-        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
@@ -61,6 +61,6 @@ def edit_profile(request, pk):
         user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'registration/edit_profile.html', {
-        'user_form': user_form,
-        'profile_form': profile_form
-    })
+            'user_form': user_form,
+            'profile_form': profile_form
+        })

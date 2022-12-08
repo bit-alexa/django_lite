@@ -24,9 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1tm0(b#3(f9#r2iqb4&3rmlaf@c&4+06menfo*7#uw7sikjt_8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['env-gramdjango.eba-b5abanpe.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['env-gramdjango.eba-b5abanpe.us-west-2.elasticbeanstalk.com',
+                 'env-gram.eba-k8fhm9wi.us-west-2.elasticbeanstalk.com', '127.0.0.1']
+
+
 
 
 # Application definition
@@ -82,7 +85,7 @@ WSGI_APPLICATION = 'gram.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
 

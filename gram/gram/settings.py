@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-1tm0(b#3(f9#r2iqb4&3rmlaf@c&4+06menfo*7#uw7sikjt_8
 DEBUG = True
 
 ALLOWED_HOSTS = ['env-gramdjango.eba-b5abanpe.us-west-2.elasticbeanstalk.com',
-                 'env-gram.eba-k8fhm9wi.us-west-2.elasticbeanstalk.com', '127.0.0.1']
+                 'env-gram.eba-k8fhm9wi.us-west-2.elasticbeanstalk.com', '*']
 
 
 

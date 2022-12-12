@@ -18,8 +18,21 @@
         <h5 class="card-title">{{ user_page.first_name }} {{ user_page.last_name }}</h5>
         <p class="card-text">{{ user_page.profile.bio }}</p>
         <p class="card-text"><small class="text-muted">{{ user_page.email }}</small></p>
+          <div>{{ user_page.profile.followers.all.count }} follower{{user_page.profile.followers.count|pluralize:",s"}}</div>
+
         {% if can_edit %}
           <a class="btn btn-outline-primary" href="{% url 'edit_profile' user_page.pk %}"> Edit info </a>
+        {% else %}
+                <form action="{% url 'follow_user' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_to_follow_id" value="{{ user_page.profile.id }}" >
+                    {% if request_user not in user_page.profile.followers.all %}
+                    <button class="btn btn-primary btm-sm" type="submit" name="next" value="{{ request.path }}">Follow</button>
+                    {% else %}
+                    <button class="btn btn-danger btm-sm" type="submit" name="next" value="{{ request.path }}">Unfollow</button>
+                    {% endif %}
+                </form>
+
         {% endif %}
       </div>
     </div>
@@ -60,16 +73,23 @@
                 <p>{% for tag in post.tags.all %}
                 <a href="{% url 'posts_by_tag' tag.slug %}">#{{ tag.name }} </a>
                 {% endfor %} </p>
-                {{ post.likes.all.count }} likes
-                <form action="{% url 'like_post'%}" method="POST">
+                    <div>
+                        <div class="inline"><div class="like-count{{ post.id }}">{{ post.likes.all.count }} </div></div>
+                        <div class="inline"><div> like{{ post.likes.all.count|pluralize }}</div></div>
+                    </div>
+
+                <form action="{% url 'like_post'%}" method="POST" class="like-form" id="{{ post.id }}">
                     {% csrf_token %}
-                    <input type="hidden" name="post_id" value="{{post.id}}" >
-                    {% if user not in post.likes.all %}
-                    <button class="btn btn-primary btm-sm" type="submit" name="next" value="{{ request.path }}">Like</button>
-                    {% else %}
-                    <button class="btn btn-danger btm-sm" type="submit" name="next" value="{{ request.path }}">Unlike</button>
-                    {% endif %}
+                    <input type="hidden" name="post_id" value="{{ post.id }}" >
+                    <button class="btn btn-primary btm-sm like-btn{{post.id}}" type="submit">
+                        {% if user not in post.likes.all %}
+                            Like
+                        {% else %}
+                            Unlike
+                        {% endif %}
+                    </button>
                 </form>
+
         </div>
     </div>
 </div>
@@ -81,3 +101,49 @@
 
 
 {% endblock %}
+
+{% block javascript %}
+    <script>
+    $( document ).ready(function() {
+        let display = false
+
+        $('.like-form').submit(function(e){
+            e.preventDefault()
+
+            const post_id = $(this).attr('id')
+            const likeText = $(`.like-btn${post_id}`).text()
+            const trim = $.trim(likeText)
+            const url = $(this).attr('action')
+
+
+            let res;
+            const likes = $(`.like-count${post_id}`).text()
+            const trimCount = parseInt(likes)
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                    'post_id': post_id,
+                },
+                success: function(response) {
+                        if(trim === 'Unlike') {
+                            $(`.like-btn${post_id}`).text('Like')
+                            res = trimCount - 1
+                        } else {
+                            $(`.like-btn${post_id}`).text('Unlike')
+                            res = trimCount + 1
+                        }
+
+                        $(`.like-count${post_id}`).text(res)
+                    },
+                    error: function(response) {
+                        console.log('error', response)
+                    }
+            })
+
+        })
+       });
+    </script>
+{% endblock javascript %}

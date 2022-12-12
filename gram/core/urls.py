@@ -7,4 +7,5 @@ urlpatterns = [
     path('add_post/', add_post, name='add_post'),
     path('tag/<slug:tag_slug>/', login_required(TagView.as_view()), name='posts_by_tag'),
     path('like/', like_post, name='like_post'),
+    path('pers/<slug:personal_feed>/', feed, name='personal_feed'),
 ]

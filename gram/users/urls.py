@@ -1,12 +1,7 @@
 from django.urls import path
-from .views import activate, registration, profile_page, edit_profile
+from .views import activate, registration, profile_page, edit_profile, follow_user
 from django.conf import settings
-from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
-
-# urlpatterns = [
-#     path('registration/', UserRegisterView.as_view(), name='registration'),
-# ]
 
 urlpatterns = [
     path('registration/', registration, name='registration'),
@@ -14,6 +9,7 @@ urlpatterns = [
         activate, name='activate'),
     path('<int:pk>/profile/', profile_page, name='profile_page'),
     path('<int:pk>/profile/edit/', edit_profile, name='edit_profile'),
+    path('follow/', follow_user, name='follow_user')
 ]
 
 if settings.DEBUG:

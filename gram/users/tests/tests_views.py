@@ -41,7 +41,7 @@ class TestView(TestCase):
         self.client.login(username='john', password='johnpassword')
         response = self.client.post(reverse('edit_profile', args=str(self.user1.pk)),
                          data={'bio': 'somebio'})
-        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.status_code, 200)
 
 
 

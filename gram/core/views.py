@@ -1,20 +1,25 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
-from .models import Post, Image, Like
+from .models import Post, Image
 from .forms import AddPostForm, ImageForm
-from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
 
+
 @login_required()
-def feed(request):
-    posts = Post.objects.all().order_by('-pk')
-    images = Image.objects.all()
+def feed(request, personal_feed=None):
     user = request.user
+    if personal_feed:
+        posts = Post.objects.filter(author__in=user.profile.following.all()).order_by('-pk')
+    else:
+        posts = Post.objects.all().order_by('-pk')
+    images = Image.objects.all()
     context = {
         'posts': posts,
         'images': images,
-        'user': user
+        'user': user,
+        'feed_topic': f'Feed {personal_feed}'
     }
     return render(request, "core/feed.html", context)
 
@@ -25,16 +30,14 @@ def like_post(request):
         post_obj = get_object_or_404(Post, id=request.POST.get('post_id'))
         if user in post_obj.likes.all():
             post_obj.likes.remove(user)
+            is_liked = False
         else:
             post_obj.likes.add(user)
-        like, created = Like.objects.get_or_create(user=user, post_id=post_obj.id)
-        if not created:
-            if like.value == 'Like':
-                like.value = 'Unlike'
-            else:
-                like.value = 'Like'
-        like.save()
-    return HttpResponseRedirect(request.POST.get('next', '/'))
+            is_liked = True
+        data = {
+            "total_likes": post_obj.likes.all().count(),
+            "is_liked": is_liked}
+        return JsonResponse(data, safe=False)
 
 
 def add_post(request):

@@ -10,9 +10,6 @@ class TestView(TestCase):
         self.client = Client()
         self.user1 = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
         self.user2 = User.objects.create_user('john2', 'lennon@thebeatles2.com', 'johnpassword2')
-        #self.post = Post.objects.create(title='Test Title', author=self.user1)
-        #self.post.tags.add('tag1')
-        #self.post.likes.set([self.user1.pk, self.user2.pk])
 
     def test_feed_view_deny_anonymous_GET(self):
         response = self.client.get(reverse('feed'))
@@ -24,6 +21,8 @@ class TestView(TestCase):
         response = self.client.get(reverse('feed'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'core/feed.html')
+        self.assertTrue('posts' in response.context)
+        self.assertEqual(len(response.context['posts']), 0)
 
     def test_add_post_view_GET(self):
         self.client.login(username='john', password='johnpassword')
@@ -33,6 +32,7 @@ class TestView(TestCase):
 
     def test_add_post_view_POST(self):
         self.client.login(username='john', password='johnpassword')
+        self.assertEquals(Post.objects.filter(author=self.user1).count(), 0)
         response = self.client.post(reverse('add_post'),
                                     data={
                                         'title': 'Test Title',
@@ -41,6 +41,7 @@ class TestView(TestCase):
                                     })
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Post.objects.filter(author=self.user1).count(), 1)
+        self.assertEquals(Post.objects.filter(author=self.user1).first().title, 'Test Title')
 
     def test_add_post_view_POST_not_valid(self):
         self.client.login(username='john2', password='johnpassword2')
@@ -59,7 +60,7 @@ class TestView(TestCase):
         response = self.client.post(reverse('like_post'),
                                     data={'post_id': self.post.id})
         self.assertEquals(self.post.count_likes(), 1)
-        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.status_code, 200)
 
     def test_like_post_view_POST_unlike(self):
         self.client.login(username='john', password='johnpassword')
@@ -70,7 +71,7 @@ class TestView(TestCase):
         response2 = self.client.post(reverse('like_post'),
                                     data={'post_id': self.post.id})
         self.assertEquals(self.post.count_likes(), 0)
-        self.assertEquals(response2.status_code, 302)
+        self.assertEquals(response2.status_code, 200)
 
     def test_tag_view(self):
         self.client.login(username='john', password='johnpassword')
@@ -78,6 +79,4 @@ class TestView(TestCase):
         response = self.client.get(reverse('posts_by_tag', kwargs={'tag_slug': 'tag1'}))
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'core/feed.html')
-
-
-
+        self.assertEquals(response.context['first_post'], self.post)

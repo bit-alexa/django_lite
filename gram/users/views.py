@@ -1,9 +1,10 @@
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from pkg_resources import _
 from .forms import SignupForm, UserForm, ProfileForm
 from django.contrib.auth.models import User
+from .models import Profile
 from django.contrib import messages
 from core.models import Post, Image
 from .services import is_current_user, send_email, is_valid_token
@@ -43,6 +44,7 @@ def profile_page(request, pk):
         'images': images,
         'user_page': user_page,
         'can_edit': is_current_user(request.user, user_page),
+        'request_user': request.user
     }
     return render(request, "registration/profile.html", context)
 
@@ -64,3 +66,15 @@ def edit_profile(request, pk):
             'user_form': user_form,
             'profile_form': profile_form
         })
+
+
+def follow_user(request):
+    if request.method == 'POST':
+        profile_to_follow = get_object_or_404(Profile, id=request.POST.get('user_to_follow_id'))
+        if request.user in profile_to_follow.followers.all():
+            profile_to_follow.followers.remove(request.user)
+            request.user.profile.following.remove(profile_to_follow.user)
+        else:
+            profile_to_follow.followers.add(request.user)
+            request.user.profile.following.add(profile_to_follow.user)
+    return HttpResponseRedirect(request.POST.get('next', '/'))

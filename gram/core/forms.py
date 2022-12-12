@@ -9,16 +9,12 @@ class AddPostForm(forms.ModelForm):
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title of the post'}),
-            #'author': forms.Select(attrs={'class': 'form-control', 'author': 'Title of the post'}),
             'tags': forms.TextInput(attrs={'class': 'form-control', 'data-role': 'tagsinput', 'placeholder': 'Tags'}),
         }
 
 
 class ImageForm(forms.ModelForm):
-    image = forms.ImageField(
-        label="Image",
-        widget=forms.ClearableFileInput(attrs={"multiple": True}),
-    )
+    image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file', "multiple": True}))
 
     class Meta:
         model = Image

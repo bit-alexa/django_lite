@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import cloudinary
 import cloudinary_storage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -46,8 +47,8 @@ INSTALLED_APPS = [
     'users',
     'taggit',
     'easy_thumbnails',
+    'cloudinary_storage',
     'cloudinary',
-    'cloudinary_storage'
 ]
 
 MIDDLEWARE = [
